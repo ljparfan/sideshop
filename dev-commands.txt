@@ -1,0 +1,3 @@
+minikube service --url auth-db-service
+kubectl get pods -n ingress-nginx
+kubectl -n ingress-nginx port-forward pod/ingress-nginx-controller-5959f988fd-q7lgc --address 0.0.0.0 80:80 443:443

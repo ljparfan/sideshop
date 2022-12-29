@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+data:
+  # property-like keys; each key maps to a simple value
+  db-type: postgres
+  db-host: auth-db-service
+  db-port: "5432"
+  db-name: auth
+  db-synchronize: "true"
+  db-logging: "false"
+  server-port: "3000"
