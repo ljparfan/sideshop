@@ -45,3 +45,10 @@ spec:
                 name: inventory-service
                 port:
                   number: 3000
+          - path: /api/cart-items/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: inventory-service
+                port:
+                  number: 3000

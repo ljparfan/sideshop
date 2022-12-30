@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  labels:
+    app: cart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+        - name: cart
+          image: ljparfan22/sideshop-cart
+          # readinessProbe:
+          #   tcpSocket:
+          #     port: 3000
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cart-secret
+                  key: db-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cart-secret
+                  key: db-password
+            - name: DB_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-type
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-port
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-name
+            - name: DB_SYNCHRONIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-synchronize
+            - name: DB_LOGGING
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: db-logging
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: access-token-secret
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: refresh-token-secret
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: cart-config
+                  key: server-port
+            - name: SERVICE_NAME
+              value: cart-service
+            - name: KAFKA_URL
+              value: kafka-service:9092
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+spec:
+  selector:
+    app: cart
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
