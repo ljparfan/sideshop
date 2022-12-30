@@ -1,6 +1,6 @@
 import {
   AppFile,
-  authentication,
+  isAuthenticated,
   deleteFiles,
   getFileUrl,
   logger,
@@ -8,6 +8,7 @@ import {
   uploadFile,
   uploadHandler,
   validateRequest,
+  paginate,
 } from "@sideshop/common";
 import express, { NextFunction, Request, Response } from "express";
 import {
@@ -74,7 +75,7 @@ type CustomRequest = Request & {
 
 productRouter.post(
   "/",
-  authentication,
+  isAuthenticated,
   uploadHandler().array("photos", 5),
   productNumberPropsMapper,
   validateRequest<CreateProductDto>(createProductSchema),
@@ -173,12 +174,13 @@ productRouter.get(
       });
     }
 
-    const [products, totalCount] = await initialQuery
-      .skip((pageNumber - 1) * pageSize)
-      .take(pageSize)
-      .getManyAndCount();
-
-    const totalPages = Math.ceil(totalCount / pageSize);
+    let {
+      result: { totalCount, totalPages, items: products },
+    } = await paginate<Product>(
+      Product,
+      { pageNumber, pageSize },
+      initialQuery
+    );
 
     const items = products.map(
       (p) =>
@@ -215,7 +217,7 @@ productRouter.get(
 
 productRouter.put(
   "/:id",
-  authentication,
+  isAuthenticated,
   productExists,
   uploadHandler().array("photos", 5),
   updateProductPhotos,
@@ -296,7 +298,7 @@ productRouter.put(
 
 productRouter.delete(
   "/:id",
-  authentication,
+  isAuthenticated,
   productExists,
   async (req: CustomRequest, res: Response) => {
     const product = req.existingProduct!;

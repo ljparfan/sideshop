@@ -1,6 +1,6 @@
 import {
   entityExists,
-  authentication,
+  isAuthenticated,
   NotFoundError,
   validateRequest,
 } from "@sideshop/common";
@@ -13,7 +13,7 @@ const cartItemRouter = Router();
 
 cartItemRouter.post(
   "/",
-  authentication,
+  isAuthenticated,
   validateRequest<CartItemDto>(cartItemSchema),
   validateQuantity,
   async (req, res) => {
@@ -29,7 +29,7 @@ cartItemRouter.post(
   }
 );
 
-cartItemRouter.get("/", authentication, async (req, res) => {
+cartItemRouter.get("/", isAuthenticated, async (req, res) => {
   const cartItems = await CartItem.findBy({ userId: req.user!.id });
 
   res.send(cartItems);
@@ -37,7 +37,7 @@ cartItemRouter.get("/", authentication, async (req, res) => {
 
 cartItemRouter.put(
   "/:id",
-  authentication,
+  isAuthenticated,
   entityExists(CartItem),
   validateRequest<CartItemDto>(cartItemSchema),
   validateQuantity,
@@ -59,7 +59,7 @@ cartItemRouter.put(
 
 cartItemRouter.delete(
   "/:id",
-  authentication,
+  isAuthenticated,
   entityExists(CartItem),
   async (req, res) => {
     const cartItem = req.entity as CartItem;

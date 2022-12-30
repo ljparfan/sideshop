@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-config
+data:
+  # property-like keys; each key maps to a simple value
+  db-type: postgres
+  db-host: order-db-service
+  db-port: "5432"
+  db-name: order
+  db-synchronize: "true"
+  db-logging: "false"
+  server-port: "3000"
+  aws-s3-bucket-name: sideshopbucket
+  aws-region: us-east-1

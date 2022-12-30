@@ -1,5 +1,5 @@
 import {
-  authentication,
+  isAuthenticated,
   BadRequestError,
   DecodedRefreshToken,
   InternalServerError,
@@ -71,7 +71,10 @@ authRouter.post(
       await user.save();
 
       res.send({
-        accessToken: generateAccessToken({ id: user.id }),
+        accessToken: generateAccessToken({
+          id: user.id,
+          isAdmin: user.isAdmin,
+        }),
         refreshToken: generateRefreshToken({
           id: user.id,
           tokenVersion: user.tokenVersion,
@@ -124,7 +127,7 @@ authRouter.post(
   }
 );
 
-authRouter.post("/logout", authentication, async (req, res) => {
+authRouter.post("/logout", isAuthenticated, async (req, res) => {
   const user = await User.findOneBy({ id: req.user!.id });
   if (!user) {
     throw new InternalServerError("An unexpected error occurred");

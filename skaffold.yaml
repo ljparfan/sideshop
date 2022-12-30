@@ -32,3 +32,11 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: ljparfan22/sideshop-order
+      context: order
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .

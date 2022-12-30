@@ -5,7 +5,7 @@ import {
   sendOtpViaSms,
   logger,
   InternalServerError,
-  authentication,
+  isAuthenticated,
   NotAuthorizedError,
   generateOtpSecret,
 } from "@sideshop/common";
@@ -60,7 +60,7 @@ userRouter.post(
   }
 );
 
-userRouter.get("/me", authentication, async (req, res) => {
+userRouter.get("/me", isAuthenticated, async (req, res) => {
   const user = await User.findOneBy({ id: req.user!.id });
 
   if (!user) {
